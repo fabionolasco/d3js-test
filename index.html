@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Random Scribble Paths</title>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+</head>
+<body>
+    <script>
+        var svg = d3.select("body")
+            .append("svg")
+            .attr("width", window.innerWidth)
+            .attr("height", window.innerHeight);
+
+        var circlesCount = 15;
+        var circlesLeft = [];
+        var circlesRight = [];
+
+        for (var i = 0; i < circlesCount; i++) {
+            circlesLeft.push({cx: window.innerWidth * 0.2, cy: 50 + i * (window.innerHeight / circlesCount)});
+            circlesRight.push({cx: window.innerWidth * 0.8, cy: 50 + i * (window.innerHeight / circlesCount)});
+        }
+
+        function shuffle(array) {
+            var currentIndex = array.length, temporaryValue, randomIndex;
+
+            while (0 !== currentIndex) {
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex -= 1;
+
+                temporaryValue = array[currentIndex];
+                array[currentIndex] = array[randomIndex];
+                array[randomIndex] = temporaryValue;
+            }
+
+            return array;
+        }
+
+        circlesRight = shuffle(circlesRight);
+
+        var colors = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf", "#ffff00"];
+        colors = shuffle(colors);
+
+        function createGroup(i, color) {
+            var group = svg.append('g')
+                .style('fill', color)
+                .style('stroke', color);
+
+            group.append("circle")
+                .attr("class", "left")
+                .attr("cx", circlesLeft[i].cx)
+                .attr("cy", circlesLeft[i].cy)
+                .attr("r", 20);
+
+            group.append("circle")
+                .attr("class", "right")
+                .attr("cx", circlesRight[i].cx)
+                .attr("cy", circlesRight[i].cy)
+                .attr("r", 20);
+
+            group.append("path")
+                .attr("d", "M" + circlesLeft[i].cx + "," + circlesLeft[i].cy + " Q" + (circlesLeft[i].cx + circlesRight[i].cx) / 2 + "," + (Math.random() * window.innerHeight) + " " + circlesRight[i].cx + "," + circlesRight[i].cy)
+                .attr("fill", "none");
+
+            group.on("click", function(d) {
+                if (color === "#ffff00") {
+                    alert("His way is the best way!");
+                } else {
+                    alert("Wrong!");
+                }
+            });
+        }
+
+        for (var i = 0; i < circlesCount; i++) {
+            createGroup(i, colors[i % colors.length]);
+        }
+    </script>
+</body>
+</html>
